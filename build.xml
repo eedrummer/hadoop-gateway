@@ -34,7 +34,6 @@
                  uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
     </target>
 
-    
     <target name="clean">
         <delete dir="classes"/>
         <delete dir="dist"/>
@@ -54,7 +53,36 @@
             </classpath>
         </javac>
     </target>
-    
+
+    <target name="test-compile" depends="compile">
+        <mkdir dir="test-classes"/>
+        <javac srcdir="test/java" destdir="test-classes" debug="true">
+            <classpath>
+                <pathelement location="classes"/>
+                <fileset dir="lib">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="test" depends="test-compile">
+        <junit printsummary="true">
+            <classpath>
+                <pathelement location="classes"/>
+                <pathelement location="test-classes"/>
+                <fileset dir="lib">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+            <batchtest>
+                <fileset dir="test/java">
+                  <include name="**/*Test*.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
     <target name="get-deps" depends="init-ivy" description="retrieve dependencies with ivy">
         <ivy:configure file="ivysettings.xml" />
         <ivy:retrieve />

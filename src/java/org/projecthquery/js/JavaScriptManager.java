@@ -22,6 +22,10 @@ public class JavaScriptManager {
         }
     }
     
+    public Object evaluate(String javaScript) {
+        return context.evaluateString(scope, javaScript, "temporary", 1,null);
+    }
+    
     public void destroy() {
         Context.exit();
     }

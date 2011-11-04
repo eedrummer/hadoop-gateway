@@ -3,5 +3,6 @@
     <dependencies>
         <dependency org="org.apache.hadoop" name="hadoop-core" rev="0.20.205.0"/>
         <dependency org="org.mozilla" name="rhino" rev="1.7R3"/>
+        <dependency org="junit" name="junit" rev="4.10"/>
     </dependencies>
 </ivy-module>
