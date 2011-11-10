@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.hadoop.io.ArrayWritable;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.junit.Before;
@@ -20,16 +21,23 @@ public class TypeConverterTest {
     }
 
     @Test
-    public void testDoubleConversionm() {
+    public void testDoubleConversion() {
         Object result = jsm.evaluate("1");
         DoubleWritable dw = (DoubleWritable) TypeConverter.convert(result);
         assertTrue(1 == dw.get());
     }
 
     @Test
-    public void testStringConversionm() {
+    public void testStringConversion() {
         Object result = jsm.evaluate("'hello'");
         Text text = (Text) TypeConverter.convert(result);
         assertTrue("hello".equals(text.toString()));
+    }
+    
+    @Test
+    public void testArrayConversion() {
+        Object result = jsm.evaluate("[1, 2, 3]");
+        ArrayWritable aw = (ArrayWritable) TypeConverter.convert(result);
+        assertTrue(1 == ((DoubleWritable) aw.get()[0]).get());
     }
 }
