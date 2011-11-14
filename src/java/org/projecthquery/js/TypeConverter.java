@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.apache.hadoop.io.ArrayWritable;
+import org.apache.hadoop.io.BooleanWritable;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.Text;
@@ -22,6 +23,9 @@ public class TypeConverter {
         }
         if (jsObject.getClass().equals(String.class)) {
             convertedJSType = new Text((String) jsObject);
+        }
+        if (jsObject.getClass().equals(Boolean.class)) {
+            convertedJSType = new BooleanWritable((Boolean) jsObject);
         }
         if (jsObject.getClass().equals(NativeArray.class)) {
             NativeArray jsArray = (NativeArray) jsObject;

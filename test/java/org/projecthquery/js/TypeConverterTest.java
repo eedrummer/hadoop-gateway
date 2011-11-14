@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.hadoop.io.ArrayWritable;
+import org.apache.hadoop.io.BooleanWritable;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.Text;
@@ -48,4 +49,11 @@ public class TypeConverterTest {
         MapWritable mw = (MapWritable) TypeConverter.convert(result);
         assertTrue("bar".equals(((Text) mw.get(new Text("foo"))).toString()));
     }
+    
+    @Test
+    public void testBooleanConversion() {
+        Object result = jsm.evaluate("true");
+        BooleanWritable bw = (BooleanWritable) TypeConverter.convert(result);
+        assertTrue(bw.get());
+    }    
 }
