@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.hadoop.io.ArrayWritable;
 import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.Text;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,5 +40,12 @@ public class TypeConverterTest {
         Object result = jsm.evaluate("[1, 2, 3]");
         ArrayWritable aw = (ArrayWritable) TypeConverter.convert(result);
         assertTrue(1 == ((DoubleWritable) aw.get()[0]).get());
+    }
+    
+    @Test
+    public void testMapConversion() {
+        Object result = jsm.evaluate("var baz = {\"foo\": \"bar\"}; baz;");
+        MapWritable mw = (MapWritable) TypeConverter.convert(result);
+        assertTrue("bar".equals(((Text) mw.get(new Text("foo"))).toString()));
     }
 }

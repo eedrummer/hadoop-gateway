@@ -2,14 +2,18 @@ package org.projecthquery.js;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 import org.apache.hadoop.io.ArrayWritable;
 import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.mozilla.javascript.NativeArray;
+import org.mozilla.javascript.NativeObject;
 
 public class TypeConverter {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static Writable convert(Object jsObject) {
         Writable convertedJSType = null;
         
@@ -29,6 +33,15 @@ public class TypeConverter {
             ArrayWritable aw = new ArrayWritable(writableArray.get(0).getClass());
             aw.set(writableArray.toArray(new Writable[]{}));
             convertedJSType = aw;
+        }
+        if (jsObject.getClass().equals(NativeObject.class)) {
+            MapWritable mapWritable = new MapWritable();
+            NativeObject nativeObject = (NativeObject) jsObject;
+            for (Iterator iterator = nativeObject.entrySet().iterator(); iterator.hasNext();) {
+                Entry<Object, Object> entry = (Entry<Object, Object>) iterator.next();
+                mapWritable.put(convert(entry.getKey()), convert(entry.getValue()));
+            }
+            convertedJSType = mapWritable;
         }
         
         return convertedJSType;
