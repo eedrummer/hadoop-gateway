@@ -7,49 +7,46 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
 import org.mozilla.javascript.Function;
+import org.mozilla.javascript.Scriptable;
 import org.projecthquery.js.JavaScriptManager;
 import org.projecthquery.js.JavaScriptSource;
 import org.projecthquery.js.TypeConverter;
 
-public class JavaScriptMapper extends
-    Mapper<LongWritable, Text, Writable, Writable> {
-    Function js_map;
+public class JavaScriptReducer extends Reducer<Writable, Writable, Writable, Writable> {
     private JavaScriptManager jsMan;
     @Override
-    protected void map(LongWritable key, Text value,
-            org.apache.hadoop.mapreduce.Mapper.Context context)
-            throws IOException, InterruptedException {
+    public void reduce(Writable key, Iterable<Writable> values,
+            Context context) throws IOException, InterruptedException {
         
+        Function red = (Function)jsMan.getFunction("reduce");
+        Scriptable scope = jsMan.getScope();
+        org.mozilla.javascript.Context jsCtx = jsMan.getContext();
+        Object v = red.call(jsCtx, scope, scope, new Object[]{key,values});
+        context.write(key, TypeConverter.convert(v));
     }
 
     @Override
-    protected void setup(org.apache.hadoop.mapreduce.Mapper.Context context)
+    protected void setup(org.apache.hadoop.mapreduce.Reducer.Context context)
             throws IOException, InterruptedException {
- 
+        // TODO Auto-generated method stub
         super.setup(context);
+        
         Configuration conf = context.getConfiguration();
         List<JavaScriptSource> js = new ArrayList<JavaScriptSource>();
-        js.add(new JavaScriptSource("map.js", conf.get("map_js")));
+        js.add(new JavaScriptSource("reduce.js", conf.get("reduce_js")));
         js.add(new JavaScriptSource("functions.js", conf.get("functions_js")));
         js.add(new JavaScriptSource("emit.js", "function emit(k,v){_mapper.emit(k,v,_hadoop_context)"));
         
         Map<String,Object> cos = new HashMap<String,Object>();
         cos.put("_hadoop_context", context);
-        cos.put("_mapper", this);
+        cos.put("_reducer", this);
         
         jsMan = new JavaScriptManager(js,cos);
         
-       
     }
-    
-    
-    public void emit(Object k, Object v, org.apache.hadoop.mapreduce.Mapper.Context  context) throws IOException, InterruptedException{
-         context.write(TypeConverter.convert(k), TypeConverter.convert(v));
-    }
+
 
 }
