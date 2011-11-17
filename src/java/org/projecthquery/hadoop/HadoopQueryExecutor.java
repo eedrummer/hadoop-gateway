@@ -1,7 +1,5 @@
 package org.projecthquery.hadoop;
 
-import java.io.Writer;
-
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapred.FileInputFormat;
@@ -10,17 +8,18 @@ import org.apache.hadoop.mapred.JobClient;
 import org.apache.hadoop.mapred.JobConf;
 
 public class HadoopQueryExecutor {
-    private String map_js;
-    private String reduce_js;
-    private String functions_js;
+    private String mapJs;
+    private String reduceJs;
+    private String functionsJs;
     private String filter;
     private String queryId;
-    public HadoopQueryExecutor(String map_js, String reduce_js,
-            String functions_js, String filter, String queryId) {
+    
+    public HadoopQueryExecutor(String mapJs, String reduceJs,
+            String functionsJs, String filter, String queryId) {
         super();
-        this.map_js = map_js;
-        this.reduce_js = reduce_js;
-        this.functions_js = functions_js;
+        this.mapJs = mapJs;
+        this.reduceJs = reduceJs;
+        this.functionsJs = functionsJs;
         this.filter = filter;
         this.queryId = queryId;
         }
@@ -29,10 +28,10 @@ public class HadoopQueryExecutor {
         
          JobConf conf = new JobConf();
          JobClient c = new JobClient(conf);
-         conf.set("map.js", map_js);
-         conf.set("reduce.js", reduce_js);
+         conf.set("map.js", mapJs);
+         conf.set("reduce.js", reduceJs);
          conf.set("filter", filter);
-         conf.set("functions.js", functions_js);
+         conf.set("functions.js", functionsJs);
          conf.set("query_id", queryId);
          
          conf.setMapperClass(JavaScriptMapper.class);
