@@ -5,6 +5,7 @@
          <dependency org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.5.1"/>
         <dependency org="org.mozilla" name="rhino" rev="1.7R3"/>
         <dependency org="junit" name="junit" rev="4.10"/>
+        <dependency org="com.google.guava" name="guava" rev="10.0"/>
     </dependencies>
 </ivy-module>
 
